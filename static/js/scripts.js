@@ -292,6 +292,7 @@
 			x.open('POST', webservice);
 			x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 			x.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+			x.setRequestHeader('Access-Control-Allow-Origin', '*');
 			x.onload = function() {
 			    alert(x.responseText);
 			};
