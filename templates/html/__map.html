@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sé Bien - Informado donde estés!</title>
+    <meta name="description" content="Snaqural, Snack Natural" />
+    <meta name="generator" content="Prototipo">
+    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="../img/logo.ico" type="image/x-icon" />
+    <meta property="og:image" name="twitter:image" content="../img/logo_full.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@Snaqural">
+    <meta name="twitter:creator" content="@Snaqural">
+    <meta name="twitter:title" content="Prototipo Snaqural">
+    <meta name="twitter:description" content="Snaqural, prototipo">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
+		<link href="https://use.fontawesome.com/releases/v5.12.0/css/all.css" rel="stylesheet">
+    <link href="../css/theme.css" rel="stylesheet">
+    <link href="../css/template.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+		   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+		   crossorigin=""/>
+		<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+		   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+		   crossorigin=""></script>
+		<script src="../js/leaflet-tilelayer-colorfilter.min.js"></script>
+	  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+		<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="../js/nouislider.js"></script>
+    <link href="../css/nouislider.css" rel="stylesheet">
+		<link href="../css/style.css" rel="stylesheet">
+		<script src="../js/heatmap.min.js"></script>
+		<script src="../js/leaflet-heatmap.js"></script>
+  </head>
+  <body data-spy="scroll" data-target="#navbar1" data-offset="20">
+		<header class="bg-primary" id="mainMap">
+			<div class="container vh-100">
+				<div class="row vh-100">
+					<div class="col-12 my-auto"><!-- my-2-->
+						<div class="card"><!-- h-100 border-primary -->
+							<div class="card-header">
+								Eventos y dónde está la gente
+							</div>
+							<div class="card-body d-flex flex-column align-items-start">
+								<!--div class="col-md-12">
+									<form role="form">
+										<div class="form-group row"-->
+											<div class="form-control mapstyle" id="eventMapId"></div>
+											<!--/div>
+									</form>
+								</div-->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+    <nav class="navbar navbar-expand-sm fixed-top navbar-dark bg-primary" id="navbar1">
+			<a class="navbar-brand" href="#mainMap">
+				<img src="../img/logo.svg" width="25" height="25" class="d-inline-block align-top" alt="">
+				séBien
+			</a>
+			<span class="badge badge-pill badge-light p-1 ml-3 mr-2" id="navTimer">
+				<span class="ion ion-ios-alarm-outline"></span>
+				<strong>mié. 31 ene. 9999 23:59</strong>
+				<span class="ion ion-ios-walk-outline"></span>
+			</span>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="navbar-collapse collapse" id="collapsingNavbar">
+				<form class="form-inline text-light">
+				  <select class="form-control form-control-sm col-2" id="navFormM">
+				    <option value="0" selected>ene</option>
+				    <option value="1">feb</option>
+				    <option value="2">mar</option>
+				    <option value="3">abr</option>
+				    <option value="4">may</option>
+				    <option value="5">jun</option>
+				    <option value="6">jul</option>
+				    <option value="7">ago</option>
+				    <option value="8">sep</option>
+				    <option value="9">oct</option>
+				    <option value="10">nov</option>
+				    <option value="11">dic</option>
+				  </select>
+				  <select class="form-control form-control-sm col-2" id="navFormY">
+				    <option value="2019" selected>2019</option>
+				    <option value="2020">2020</option>
+				  </select>
+					<div class="form-group col-4">
+						<label for="formControlRangeD">Día&nbsp;<span class="ion ion-ios-calendar-outline"></span></label>
+						<input type="range" min="1" max="31" step="1" class="form-control-range" id="navRangeD">
+					</div>
+					<div class="form-group col-4">
+						<label for="formControlRangeH">Hora&nbsp;<span class="ion ion-ios-clock-outline"></span></label>
+						<input type="range"  min="0" max="23" step="1" class="form-control-range" id="navRangeH">
+					</div>
+				  <!--button type="submit" class="btn btn-primary my-1">Submit</button-->
+				</form>
+				<div class="dropdown-divider"></div>
+				<ul class="navbar-nav ml-auto">
+					<li class="nav-item"><a class="nav-link" href="#eventos">Eventos</a></li>
+					<li class="nav-item"><a class="nav-link" href="#tips">Tips</a></li>
+					<li class="nav-item"><a class="nav-link" href="#faq">Preguntas frecuentes</a></li>
+					<li class="nav-item"><a class="nav-link" href="#info">¿Cómo informarme?</a></li>
+				</ul>
+			</div>
+		</nav> 
+    <main>
+      <section class="container-fluid" id="eventos">
+          <!--div class="row vh-100">
+              <div class="col-12 my-auto"-->
+                  <div class="row text-center">
+                      <div class="col-sm-4 mb-4">
+                          <div class="card h-100">
+                              <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                  <h1 class="display-2 text-primary">
+																		<!--span class="ion ion-ios-microphone-outline"></span-->
+																		<i class="fas fa-microphone-alt"></i>
+																	</h1>
+                                  <h4 class="card-title text-primary">Conciertos</h4>
+                                  <p class="card-text">¡Buenos grupos se hacen presentes estos días! La movida musical destaca con <a href="#">Coldplay</a>, <a href="#">Dua Lipa</a> y un favorito local: <a href="#">Bareto</a>. ¿Quieres enterarte de más?</p>
+                                  <a href="#" class="btn btn-outline-primary mt-auto">Ver más</a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4 mb-4">
+                          <div class="card h-100">
+                              <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                  <h1 class="display-2 text-primary">
+																		<!--span class="ion ion-ios-people-outline"></span-->
+																		<i class="fas fa-store-alt"></i>
+																	</h1>
+                                  <h4 class="card-title text-primary">Ferias</h4>
+                                  <p class="card-text">Estas semanas hay mucho interés por <a href="#">ferias de arte callejero</a> y las <a href="#">ferias gastronómicas del barrio</a>. Además, hay novedades para los amantes del <a href="#">Cómic</a> y <a href="#">Libros Contemporáneos</a>...</p>
+                                  <a href="#" class="btn btn-outline-primary mt-auto">Ver más</a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4 mb-4">
+                          <div class="card h-100">
+                              <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                  <h1 class="display-2 text-primary">
+																		<!--span class="ion ion-ios-moon-outline"></span-->
+																		<i class="fas fa-moon"></i>
+																	</h1>
+                                  <h4 class="card-title text-primary">Nocturna</h4>
+                                  <p class="card-text">Planes para el toda la semana en <a href="#">La Basílica 640</a>, <a href="#">YOY</a> y <a href="#">Centro de Convenciones de Barranco</a>. Puedes ver notas adicionales para los aniversarios de <a href="#">El Restobar</a> y alrededores.</p>
+                                  <a href="#" class="btn btn-outline-primary mt-auto">Ver más</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              <!--/div>
+          </div-->
+      </section>
+      <section class="container-fluid" id="tips">
+          <!--div class="row vh-100">
+              <div class="col-12 my-auto"-->
+                  <div class="row text-center">
+                      <div class="col-sm-4 mb-4">
+                          <div class="card h-100">
+                              <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                  <h1 class="display-2 text-primary">
+																		<!--span class="ion ion-ios-star-outline"></span-->
+																		<i class="fas fa-highlighter"></i>
+																	</h1>
+                                  <h4 class="card-title text-primary">Destacados</h4>
+                                  <p class="card-text">Recuerda planificar tu viaje si vas a las discotecas del sur, considera las <a href="#">siguientes recomendaciones</a> para disfrutar este fin de semana...</p>
+                                  <a href="#" class="btn btn-outline-primary mt-auto">Ver más</a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4 mb-4">
+                          <div class="card h-100">
+                              <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                  <h1 class="display-2 text-primary">
+																		<!--span class="ion ion-ios-list-box-outline"></span-->
+																		<i class="fas fa-list-alt"></i>
+																	</h1>
+                                  <h4 class="card-title text-primary">Antes de salir</h4>
+                                  <p class="card-text">No olvides tus llaves, billetera y cargar tu celular. Las salidas por el día son más divertidas si sigues <a href="#">estos consejos</a>...</p>
+                                  <a href="#" class="btn btn-outline-primary mt-auto">Ver más</a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4 mb-4">
+                          <div class="card h-100">
+                              <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                  <h1 class="display-2 text-primary">
+																		<!--span class="ion ion-ios-checkmark-circle-outline"></span-->
+																		<i class="fas fa-comments"></i>
+																	</h1>
+                                  <h4 class="card-title text-primary">Utilidad</h4>
+                                  <p class="card-text">Recuerda que existen <a href="#">tramos de la costanera</a> que están en reparación, puedes utilizar <a href="#">vías alternas</a> para llegar a tus destinos preferidos...</p>
+                                  <a href="#" class="btn btn-outline-primary mt-auto">Ver más</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              <!--/div>
+          </div-->
+      </section>
+		</main>
+    <footer id="footer" class="bg-dark text-light py-2">
+        <div class="container py-2">
+            <div class="row">
+                <!--div class="col-6 col-md-6 col-lg-3 col-sm-4 mb-2"-->
+								<div class="col-5 mb-2">
+                    <h6 class="text-uppercase">Información</h6>
+                    <ul class="nav flex-column">
+                        <li><a class="text-white" target="ext" rel="nofollow" href="#" title="Enlaces">Enlaces relacionados</a></li>
+                        <li><a class="text-white" target="ext" rel="nofollow" href="#" title="Acerca">Acerca de</a></li>
+                    </ul>
+                </div>
+                <!--div class="col-6 col-md-6 col-lg-3 col-sm-4 mb-2"-->
+								<div class="col-4 mb-2">
+                    <h6 class="text-uppercase">Más</h6>
+                    <ul class="nav flex-column">
+                        <li><a class="text-white" target="_new" href="#" title="Novedades">Lo nuevo</a></li>
+                        <li><a class="text-white" target="_new" href="#" title="Contacto">Contáctanos</a></li>
+                    </ul>
+                </div>
+                <!--div class="col-12 col-md-12 col-lg-6 col-sm-4 mb-2 text-right"-->
+								<div class="col-3 mb-2 text-right">
+                    <h6 class="text-uppercase">Síguenos</h6>
+                    <ul class="nav float-right">
+                        <li><a class="text-white mr-2" rel="nofollow" href="http://twitter.com" title="Follow on Twitter"><i class="h2 fa fa-fw fa-twitter fa-2x ion-logo-twitter"></i></a></li>
+                        <li><a class="text-white mr-2" rel="nofollow" href="https://www.facebook.com" title="Follow on Facebook"><i class="h2 fa fa-fw fa-facebook fa-2x ion-logo-facebook"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            <!--/row-->
+        </div>
+    </footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+	</body>
+</html>
