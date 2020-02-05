@@ -284,6 +284,7 @@
 		};
 		
 		function bGoodGetData(evdate) {
+			alert(location.hostname);
 			let params = { date: evdate };
 			const service = "https://oplx-py-flask-bgood.herokuapp.com/event";
 			const proxyurl = "https://cors-anywhere.herokuapp.com/";
