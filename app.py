@@ -5,7 +5,7 @@
 
 
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone
 #import numpy as np
 #import dill as pickle
 import flask
@@ -44,14 +44,16 @@ def select_data(path_, sort_, date_):
 def select_between_dates(data_, date_):
     selected_data = data_
     selected_data['Date'] = pd.to_datetime(selected_data['Date'],yearfirst=True)
-    selected_data['DateFrom'] = selected_data.apply(lambda row: datetime(year = row['Date'].year,
-                                                                         month = row['Date'].month,
-                                                                         day = row['Date'].day,
-                                                                         hour = row['From']), axis=1)
-    selected_data['DateTo'] = selected_data.apply(lambda row: datetime(year = row['Date'].year,
-                                                                       month = row['Date'].month,
-                                                                       day = row['Date'].day,
-                                                                       hour = row['To']), axis=1)
+    selected_data['DateFrom'] = selected_data.apply(lambda row: datetime(year=row['Date'].year,
+                                                                         month=row['Date'].month,
+                                                                         day=row['Date'].day,
+                                                                         hour=row['From'],
+                                                                         tzinfo=timezone.utc).astimezone(), axis=1)
+    selected_data['DateTo'] = selected_data.apply(lambda row: datetime(year=row['Date'].year,
+                                                                       month=row['Date'].month,
+                                                                       day=row['Date'].day,
+                                                                       hour=row['To'],
+                                                                       tzinfo=timezone.utc).astimezone(), axis=1)
     selected_data = selected_data[(selected_data['DateFrom'] <= date_) & 
                                   (selected_data['DateTo'] >= date_)]
     selected_data.drop('DateFrom', axis=1, inplace=True)
@@ -61,10 +63,8 @@ def select_between_dates(data_, date_):
 def process_request(request_, type_):
     if request_.method == 'POST':
         _date = request_.get_json()['date']
-        print(type(_date));
-        print(_date);
     else:
-        _date = datetime(year = 2020, month = 2, day = 8, hour = 18, minute = 0, second = 0)
+        _date = datetime.now(timezone.utc).astimezone()
     if type_ == 'event':
         _data = load_event_data(_date)
     else:
