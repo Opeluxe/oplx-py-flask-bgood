@@ -288,7 +288,17 @@
 			const service = "https://oplx-py-flask-bgood.herokuapp.com/event";
 			const proxyurl = "https://cors-anywhere.herokuapp.com/";
 			let webservice = proxyurl + service;
-			var x = new XMLHttpRequest();
+			let jsondata = JSON.stringify(params);
+			let y = new XMLHttpRequest();
+			// same server
+			y.open('POST', service);
+			y.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+			y.onload = function() {
+			    alert(y.responseText);
+			};
+			y.send(jsondata);
+			// remote server
+			let x = new XMLHttpRequest();
 			x.open('POST', webservice);
 			x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 			x.setRequestHeader('Content-type', 'application/json; charset=utf-8');
@@ -296,7 +306,6 @@
 			x.onload = function() {
 			    alert(x.responseText);
 			};
-			let jsondata = JSON.stringify(params);
 			x.send(jsondata);
 		};
 				
