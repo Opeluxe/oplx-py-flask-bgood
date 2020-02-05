@@ -48,12 +48,12 @@ def select_between_dates(data_, date_):
                                                                          month=row['Date'].month,
                                                                          day=row['Date'].day,
                                                                          hour=row['From'],
-                                                                         tzinfo=timezone.utc).astimezone(), axis=1)
+                                                                         tzinfo=date_.tzinfo), axis=1)
     selected_data['DateTo'] = selected_data.apply(lambda row: datetime(year=row['Date'].year,
                                                                        month=row['Date'].month,
                                                                        day=row['Date'].day,
                                                                        hour=row['To'],
-                                                                       tzinfo=timezone.utc).astimezone(), axis=1)
+                                                                       tzinfo=date_.tzinfo), axis=1)
     selected_data = selected_data[(selected_data['DateFrom'] <= date_) & 
                                   (selected_data['DateTo'] >= date_)]
     selected_data.drop('DateFrom', axis=1, inplace=True)
