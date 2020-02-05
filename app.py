@@ -10,6 +10,7 @@ from datetime import datetime
 #import dill as pickle
 import flask
 from flask import request
+from flask import render_template
 import os
 import json
 
@@ -80,4 +81,9 @@ def event():
 @app.route('/overlay', methods=['GET', 'POST'])
 def overlay():
     return process_request(request, 'overlay')
+    
+#defining a route for rendering main page
+@app.route('/main')
+def hello():
+    return render_template('main.html')
     

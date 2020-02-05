@@ -7,8 +7,8 @@
     <meta name="description" content="Sé Bien - Información útil para movilizarse en la ciudad" />
     <meta name="generator" content="Prototipo">
     <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="../img/logo.ico" type="image/x-icon" />
-    <meta property="og:image" name="twitter:image" content="../img/logo.png">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="image/x-icon" />
+    <meta property="og:image" name="twitter:image" content="{{ url_for('static', filename='img/logo.png') }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@séBien">
     <meta name="twitter:creator" content="@séBien">
@@ -17,21 +17,21 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
 		<link href="https://use.fontawesome.com/releases/v5.12.0/css/all.css" rel="stylesheet">
-    <link href="../css/theme.css" rel="stylesheet">
-    <link href="../css/template.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/lib/theme.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/lib/template.css') }}" rel="stylesheet">
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
 		   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
 		   crossorigin=""/>
 		<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
 		   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
 		   crossorigin=""></script>
-		<script src="../js/leaflet-tilelayer-colorfilter.min.js"></script>
+		<script src="{{ url_for('static', filename='js/lib/leaflet-tilelayer-colorfilter.min.js') }}"></script>
 		<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.3.0"></script>
 	  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 		<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-		<link href="../css/style.css" rel="stylesheet">
-		<script src="../js/heatmap.min.js"></script>
-		<script src="../js/leaflet-heatmap.js"></script>
+		<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+		<script src="{{ url_for('static', filename='js/lib/heatmap.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/lib/leaflet-heatmap.js') }}"></script>
   </head>
   <body data-spy="scroll" data-target="#navbar1" data-offset="20">
 		<header class="bg-primary" id="mainMap">
@@ -58,7 +58,7 @@
 		</header>
     <nav class="navbar navbar-expand-sm fixed-top navbar-dark bg-primary" id="navbar1">
 			<a class="navbar-brand" href="#mainMap">
-				<img src="../img/logo.svg" width="25" height="25" class="d-inline-block align-top" alt="">
+				<img src="{{ url_for('static', filename='img/logo.svg') }}" width="25" height="25" class="d-inline-block align-top" alt="">
 				séBien
 			</a>
 			<!--span class="badge badge-pill badge-light p-1 ml-3 mr-2" id="navTimer"-->
@@ -231,6 +231,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="../js/scripts.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 	</body>
 </html>
