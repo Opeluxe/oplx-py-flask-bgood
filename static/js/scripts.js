@@ -243,6 +243,7 @@
 				$('#'+hour).val(_hour).change();	
 			}
 			bGoodSetDisplay(timer, date);
+			bGoodGetData(date);
 		};
 		
 		function bGoodUpdateTimer(timer, year, month, day, hour) {
@@ -282,14 +283,13 @@
 			});
 		};
 		
-		function bGoodGetData() {
-			let params = { date: new Date() };
+		function bGoodGetData(evdate) {
+			let params = { date: evdate };
 			const service = "https://oplx-py-flask-bgood.herokuapp.com/event";
 			const proxyurl = "https://cors-anywhere.herokuapp.com/";
 			let webservice = proxyurl + service;
 			var x = new XMLHttpRequest();
 			x.open('POST', webservice);
-			// I put "XMLHttpRequest" here, but you can use anything you want.
 			x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 			x.setRequestHeader('Content-type', 'application/json; charset=utf-8');
 			x.onload = function() {
@@ -297,28 +297,11 @@
 			};
 			let jsondata = JSON.stringify(params);
 			x.send(jsondata);
-			/*$.ajax({
-			        url: webservice,
-							headers: {
-				        'Content-Type':'application/json',
-								'X-Requested-With': 'XMLHttpRequest'
-							},
-							method: "POST",
-							dataType: "json",
-							data: JSON.stringify(params),
-        			contentType: "application/json; charset=utf-8",
-							success: function(data){
-								console.log('succes: ' + data);
-							}
-			    });*/
 		};
 				
-		// SnQlr variables and initialization
-		//var markerLayer = L.layerGroup();
-		
+		// SéBien variables and initialization		
 		if ($("#eventMapId").length) {
 			bGoodHeatmapLayer("eventMapId");
 			bGoodNavCollapse("collapsingNavbar", "navTimer", "collapsingControls");
 			bGoodSetTimer("navTimer", "navFormY", "navFormM", "navRangeD", "navRangeH");
-			bGoodGetData();
 		};
