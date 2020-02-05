@@ -281,6 +281,37 @@
 				bGoodUpdateTimer(timer, year, month, day, hour);
 			});
 		};
+		
+		function bGoodGetData() {
+			let params = { date: new Date() };
+			const service = "https://oplx-py-flask-bgood.herokuapp.com/event";
+			const proxyurl = "https://cors-anywhere.herokuapp.com/";
+			let webservice = proxyurl + service;
+			var x = new XMLHttpRequest();
+			x.open('POST', webservice);
+			// I put "XMLHttpRequest" here, but you can use anything you want.
+			x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			x.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+			x.onload = function() {
+			    alert(x.responseText);
+			};
+			let jsondata = JSON.stringify(params);
+			x.send(jsondata);
+			/*$.ajax({
+			        url: webservice,
+							headers: {
+				        'Content-Type':'application/json',
+								'X-Requested-With': 'XMLHttpRequest'
+							},
+							method: "POST",
+							dataType: "json",
+							data: JSON.stringify(params),
+        			contentType: "application/json; charset=utf-8",
+							success: function(data){
+								console.log('succes: ' + data);
+							}
+			    });*/
+		};
 				
 		// SnQlr variables and initialization
 		//var markerLayer = L.layerGroup();
@@ -289,4 +320,5 @@
 			bGoodHeatmapLayer("eventMapId");
 			bGoodNavCollapse("collapsingNavbar", "navTimer", "collapsingControls");
 			bGoodSetTimer("navTimer", "navFormY", "navFormM", "navRangeD", "navRangeH");
+			bGoodGetData();
 		};

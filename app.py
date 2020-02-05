@@ -61,6 +61,8 @@ def select_between_dates(data_, date_):
 def process_request(request_, type_):
     if request_.method == 'POST':
         _date = request_.get_json()['date']
+        print(type(_date));
+        print(_date);
     else:
         _date = datetime(year = 2020, month = 2, day = 8, hour = 18, minute = 0, second = 0)
     if type_ == 'event':
@@ -83,7 +85,8 @@ def overlay():
     return process_request(request, 'overlay')
     
 #defining a route for rendering main page
+@app.route('/')
 @app.route('/main')
-def hello():
+def main():
     return render_template('main.html')
     
