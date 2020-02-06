@@ -9,7 +9,7 @@
 		/* bGood routines (general functionality) */		
 		
 		// functionality implementation
-		function bGoodHeatmapList(mapId) {
+		/*function bGoodHeatmapList(mapId) {
 			let testData = [];
 			let cfgData = [];
 			let cfg = {};
@@ -124,15 +124,6 @@
 			});
 			
 			let colorFilter = [
-				/*'blur:0px',
-				'brightness:95%',
-				'contrast:130%',
-				'grayscale:20%',
-				'hue:290deg',
-				'opacity:100%',
-				'invert:100%',
-				'saturate:300%',
-				'sepia:10%'*/
 				'invert:30%',
 				'hue:130deg',
 				'saturate:700%',
@@ -194,7 +185,7 @@
 			});
 			
 			L.control.layers(baseMaps, overlayMaps).addTo(map);
-		};
+		};*/
 		
 		function bGoodNavCollapse(navbar, navItem, controls) {
 			$(".nav-link").on('click', function (event) {
@@ -243,7 +234,8 @@
 				$('#'+hour).val(_hour).change();	
 			}
 			bGoodSetDisplay(timer, date);
-			bGoodGetData(date);
+			bGoodGetData(date, "event");
+			bGoodGetData(date, "overlay");
 		};
 		
 		function bGoodUpdateTimer(timer, year, month, day, hour) {
@@ -283,36 +275,212 @@
 			});
 		};
 		
-		function bGoodGetData(evdate) {
-			alert(location.hostname);
+		function bGoodGetData(evdate, for_url) {
+			const service = "https://oplx-py-flask-bgood.herokuapp.com";
+			let webservice = service + '/' + for_url;
 			let params = { date: evdate };
-			const service = "https://oplx-py-flask-bgood.herokuapp.com/event";
-			const proxyurl = "https://cors-anywhere.herokuapp.com/";
-			let webservice = proxyurl + service;
 			let jsondata = JSON.stringify(params);
-			let y = new XMLHttpRequest();
-			// same server
-			y.open('POST', service);
-			y.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-			y.onload = function() {
-			    alert(y.responseText);
-			};
-			y.send(jsondata);
-			// remote server
 			let x = new XMLHttpRequest();
-			x.open('POST', webservice);
-			x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-			x.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-			x.setRequestHeader('Access-Control-Allow-Origin', '*');
+			x.responseType = 'json';
+			if (service == location.hostname) {
+				// same server
+				x.open('POST', webservice);
+				x.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+			} else {
+				// remote server
+				const proxyurl = "https://cors-anywhere.herokuapp.com/";
+				webservice = proxyurl + webservice;
+				x.open('POST', webservice);
+				x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+				x.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+			}
 			x.onload = function() {
-			    alert(x.responseText);
+					bGoodExtractData(for_url, x.response);
 			};
 			x.send(jsondata);
 		};
+		
+		function bGoodExtractData(kind, response) {
+			switch (kind) {
+				case "event":
+					bGoodUpdateEvent(response, gDynLayers);
+					break;
+				case "overlay":
+					bGoodUpdateOverlay(response, gDynLayers);
+					break;
+				default:
+					break;
+			};
+		};
+		
+		function bGoodUpdateEvent(response, gLayers) {
+			gLayers.eventGroup.clearLayers();
+			for (let i=0; i<response.length; i++) {
+				let event = response[i];
+				let marker = L.marker(bGoodEventLatLng(event), {icon: bGoodEventIcon(event)}).bindPopup(bGoodEventPopup(event));
+				gLayers.eventGroup.addLayer(marker);
+			};
+		};
+		
+		function bGoodEventLatLng(event_) {
+			return [event_['Lat'], event_['Long']];
+		};
+		
+		function bGoodEventIcon(event_) {
+			let html = "<div class='marker-pin bg-primary'></div>";
+			switch (event_['Type']) {
+				case 'Concierto':
+					html += "<i class='fas fa-microphone-alt awesome'>";
+					break;
+				case 'Feria':
+					html += "<i class='fas fa-store-alt awesome'>";
+					break;
+				case 'Nocturna':
+					html += "<i class='fas fa-moon awesome'>";
+					break;
+				default:
+					html += "<i class='fas fa-question awesome'>";
+					break;
+			};
+			let icon = L.divIcon({
+				className: 'marker-div-icon',
+        html: html,
+        iconSize: [30, 42],
+        iconAnchor: [15, 42]
+			});
+			return icon;
+		};
+		
+		function bGoodEventPopup(event_) {
+			let title = '<strong>' + event_['Name'] + '</strong>';
+			let description = '<span>'+ event_['Description'] + '</span>';
+			let place = '<span>Lugar: ' + event_['Place'] + '</span>';
+			let more = '<a href="#' + event_['Link'] + '">Más</a>';
+			let popup = title + '<br/>' + description + '</br>'+ place +'<br/>' + more;
+			return popup;
+		};
+		
+		function bGoodUpdateOverlay(response, gLayers) {
+			const initialData = {
+			  max: 8,
+			  data: []
+			};
+			let overlayData = {};
+			
+			for (let i=0; i<response.length; i++) {
+				let overlay = response[i];
+				if (overlayData[overlay['Type']]===undefined) {
+					overlayData[overlay['Type']] = initialData;
+				};
+				let item = {lat: overlay['Lat'], lng: overlay['Long'], count: overlay['Intensity']};
+				overlayData[overlay['Type']]['data'].push(item);
+			};
+			
+			Object.keys(overlayData).forEach(function(key) {
+				if (gLayers.overlayGroup[key]!==undefined) {
+					gLayers.overlayGroup[key].setData(overlayData[key]);
+				};
+			});
+			
+		};
+		
+		function bGoodStartOverlay(mapId) {
+			const overlay = ['Density', 'Issue'];
+			const initialData = {
+			  max: 8,
+			  data: []
+			};
+			const gradient = {
+				Density: {
+					'.4': 'cyan',
+					'.75': 'aquamarine',
+					'.99': 'dodgerblue'
+				},
+				Issue: {
+					'.4': 'lightcoral',
+					'.75': 'salmon',
+					'.99': 'tomato'
+				}
+			};
+			
+			let config = {
+				container: document.getElementById(mapId),
+			  radius: 100,
+			  scaleRadius: false,
+			  useLocalExtrema: true,
+			  latField: 'lat',
+			  lngField: 'lng',
+			  valueField: 'count',
+				maxOpacity: .4,
+				minOpacity: 0,
+				blur: .8,
+				gradient: { }
+			};
+			let overlayGroup = {};
+			
+			for (let i=0; i<overlay.length; i++) {
+				if (overlayGroup[overlay[i]]=== undefined) {
+					config['gradient'] = gradient[overlay[i]];
+					overlayGroup[overlay[i]] = new HeatmapOverlay(config);
+					overlayGroup[overlay[i]].setData(initialData);
+				};
+			};
+			return overlayGroup;
+		};
+		
+		function bGoodStartMap(mapId, gLayers) {
+			gLayers.overlayGroup = bGoodStartOverlay(mapId);
+			
+			let baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			});
+			let lightFilter = [
+				'brightness:110%',
+				'hue:90deg',
+				'saturate:120%'
+			];
+			let lightLayer = L.tileLayer.colorFilter('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+				filter: lightFilter
+			});
+			let tonerLayer = layer = new L.StamenTileLayer("toner");
+			let wcolorLayer = layer = new L.StamenTileLayer("watercolor");
+			
+			let baseMaps = {
+				'<i class="far fa-route"></i> Calles': baseLayer,
+				'<i class="far fa-route"></i> Claro': lightLayer,
+				'<i class="far fa-map"></i> B/N': tonerLayer,
+				'<i class="far fa-map"></i> Acuarela': wcolorLayer
+			};
+
+			let overlayMaps = {
+				'<i class="far fa-grin-stars"></i> Eventos': gLayers.eventGroup,
+				'<i class="far fa-grin-wink"></i> Densidad': gLayers.overlayGroup['Density'],
+				'<i class="far fa-meh-rolling-eyes"></i> Ocurrencias': gLayers.overlayGroup['Issue']
+			};
+			
+			let map = new L.Map(mapId, {
+			  center: new L.LatLng(-12.064670090951, -77.051925659180),
+			  zoom: 14,
+				minZoom: 6,
+				maxZoom: 18,
+			  layers: [baseLayer, gLayers.eventGroup]
+			}); //.fitWorld();
+			
+			L.control.layers(baseMaps, overlayMaps).addTo(map);
+			
+			//map.locate({setView: true, maxZoom: 16});
+		};
 				
-		// SéBien variables and initialization		
+		// SéBien variables and initialization
+		let gDynLayers = {
+			eventGroup: L.layerGroup(),
+			overlayGroup: {}
+		};
+
 		if ($("#eventMapId").length) {
-			bGoodHeatmapLayer("eventMapId");
+			//bGoodHeatmapLayer("eventMapId");
+			bGoodStartMap("eventMapId", gDynLayers);
 			bGoodNavCollapse("collapsingNavbar", "navTimer", "collapsingControls");
 			bGoodSetTimer("navTimer", "navFormY", "navFormM", "navRangeD", "navRangeH");
 		};
