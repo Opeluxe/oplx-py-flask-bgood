@@ -276,8 +276,8 @@
 		};
 		
 		function bGoodGetData(evdate, for_url) {
-			const service = "https://oplx-py-flask-bgood.herokuapp.com";
-			let webservice = service + '/' + for_url;
+			const service = "oplx-py-flask-bgood.herokuapp.com";
+			let webservice = 'https://' + service + '/' + for_url;
 			let params = { date: evdate };
 			let jsondata = JSON.stringify(params);
 			let x = new XMLHttpRequest();
