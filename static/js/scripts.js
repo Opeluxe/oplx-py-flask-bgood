@@ -193,10 +193,11 @@
 			for (let i=0; i<response.length; i++) {
 				let overlay = response[i];
 				if (overlayData[overlay['Type']]===undefined) {
-					overlayData[overlay['Type']] = initialData;
+					//overlayData[overlay['Type']] = initialData;
+					overlayData[overlay['Type']] = jQuery.extend(true, {}, initialData);
 				};
 				let item = {lat: overlay['Lat'], lng: overlay['Long'], count: overlay['Intensity']};
-				overlayData[overlay['Type']]['data'].push(item);
+				overlayData[overlay['Type']].data.push(item);
 			};
 			
 			Object.keys(overlayData).forEach(function(key) {
@@ -243,8 +244,9 @@
 			
 			for (let i=0; i<overlay.length; i++) {
 				if (overlayGroup[overlay[i]]=== undefined) {
-					config['gradient'] = gradient[overlay[i]];
-					overlayGroup[overlay[i]] = new HeatmapOverlay(config);
+					let overlayCfg = jQuery.extend(true, {}, config);
+					overlayCfg.gradient = gradient[overlay[i]];
+					overlayGroup[overlay[i]] = new HeatmapOverlay(overlayCfg);
 					overlayGroup[overlay[i]].setData(initialData);
 				};
 			};
