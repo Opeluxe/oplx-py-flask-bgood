@@ -27,11 +27,11 @@
 			});
 		};
 		
-		function bGoodSetDisplay(timer, date) {
+		function bGoodSetDisplay(timer, date, message=false) {
 			const options = { 
-				weekday: 'short', 
+				weekday: (message) ? 'long' : 'short', 
 				year: 'numeric', 
-				month: 'short', 
+				month: (message) ? 'long' : 'short', 
 				day: 'numeric', 
 				hour: 'numeric', 
 				minute: 'numeric' 
@@ -40,7 +40,7 @@
 			holder.text(date.toLocaleDateString('es-PE', options));
 		};
 		
-		function bGoodSetDate(timer, year, month, day, hour, date, change = false) {
+		function bGoodSetDate(timer, year, month, day, hour, date, toast, toastMsg, change=false) {
 			let _year = date.getFullYear();
 			let _month = date.getMonth();
 			let _day = date.getDate();
@@ -57,11 +57,11 @@
 				$('#'+hour).val(_hour).change();	
 			}
 			bGoodSetDisplay(timer, date);
-			bGoodGetData(date, "event");
-			bGoodGetData(date, "overlay");
+			bGoodGetData(date, "event", toast, toastMsg);
+			bGoodGetData(date, "overlay", toast, toastMsg);
 		};
 		
-		function bGoodUpdateTimer(timer, year, month, day, hour) {
+		function bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg) {
 			let _year = $('#'+year+' option:selected').val();
 			let _month = $('#'+month+' option:selected').val();
 			let _day = $('#'+day).val();
@@ -75,30 +75,30 @@
 			if ( nowDate > maxDate ) {
 				nowDate = maxDate;
 			};
-			bGoodSetDate(timer, year, month, day, hour, nowDate, true);
+			bGoodSetDate(timer, year, month, day, hour, nowDate, toast, toastMsg, true);
 		};
 		
-		function bGoodSetTimer(timer, year, month, day, hour) {
-			bGoodSetDate(timer, year, month, day, hour, new Date());
+		function bGoodSetTimer(timer, year, month, day, hour, toast, toastMsg) {
+			bGoodSetDate(timer, year, month, day, hour, new Date(), toast, toastMsg);
 			$('#'+year).change( function() {
 				$(this).find(":selected").each(function () {
-					bGoodUpdateTimer(timer, year, month, day, hour);
+					bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
 				});
 			});
 			$('#'+month).change( function() {
 				$(this).find(":selected").each(function () {
-					bGoodUpdateTimer(timer, year, month, day, hour);
+					bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
 				});
 			});
 			$('#'+day).change(function() {
-				bGoodUpdateTimer(timer, year, month, day, hour);
+				bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
 			});
 			$('#'+hour).change(function() {
-				bGoodUpdateTimer(timer, year, month, day, hour);
+				bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
 			});
 		};
 		
-		function bGoodGetData(evdate, for_url) {
+		function bGoodGetData(evdate, for_url, toast, toastMsg) {
 			const service = "oplx-py-flask-bgood.herokuapp.com";
 			let webservice = 'https://' + service + '/' + for_url;
 			let params = { date: evdate };
@@ -119,7 +119,10 @@
 			}
 			x.onload = function() {
 					bGoodExtractData(for_url, x.response);
+					$('#'+toast).toast('hide');
 			};
+			bGoodSetDisplay(toastMsg, evdate, true);
+			$('#'+toast).toast('show');
 			x.send(jsondata);
 		};
 		
@@ -306,5 +309,5 @@
 		if ($("#eventMapId").length) {
 			bGoodStartMap("eventMapId", gDynLayers);
 			bGoodNavCollapse("collapsingNavbar", "navTimer", "collapsingControls");
-			bGoodSetTimer("navTimer", "navFormY", "navFormM", "navRangeD", "navRangeH");
+			bGoodSetTimer("navTimer", "navFormY", "navFormM", "navRangeD", "navRangeH", "myToast", "myToastMsg");
 		};
