@@ -65,13 +65,13 @@
 				</div>
 			</div>
 		</header>
-    <nav class="navbar navbar-expand-sm fixed-top navbar-dark bg-primary" id="navbar1">
+    <nav class="navbar navbar-expand-xl fixed-top navbar-dark bg-primary" id="navbar1">
 			<a class="navbar-brand" href="#mainMap">
 				<img src="{{ url_for('static', filename='img/logo.svg') }}" width="25" height="25" class="d-inline-block align-top" alt="">
 				séBien
 			</a>
 			<!--span class="badge badge-pill badge-light p-1 ml-3 mr-2" id="navTimer"-->
-			<a class="badge badge-pill badge-light p-2 ml-3 mr-2" id="navTimer" data-toggle="collapse" href="#collapsingControls" role="button" aria-expanded="false" aria-controls="collapsingControls">
+			<a class="btn btn-outline-light p-1 mt-0 mt-0 ml-0 mr-2" id="navTimer" data-toggle="collapse" href="#collapsingControls" role="button" aria-expanded="false" aria-controls="collapsingControls">
 				<!--i class="fas fa-history"></i-->
 				<i class="fas fa-swimmer pr-1"></i>
 				<strong>mié. 31 ene. 9999 23:59</strong>
@@ -79,7 +79,7 @@
 				<i class="fas fa-running pl-1"></i>
 			<!--/span-->
 			</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar" aria-controls="collapsingNavbar" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="navbar-collapse collapse" id="collapsingControls">
@@ -103,11 +103,17 @@
 				    <option value="2020">2020</option>
 				  </select>
 					<div class="form-group col-4">
-						<label for="formControlRangeD">Día&nbsp;<i class="fas fa-calendar-day"></i></label>
+						<label for="navRangeD" class="w-100 d-flex">
+							Día<i class="fas fa-calendar-day pl-2"></i>
+							<small class="badge badge-pill badge-light ml-auto p-0" id="rangeTipD">99</small>
+						</label>
 						<input type="range" min="1" max="31" step="1" class="form-control-range" id="navRangeD">
 					</div>
 					<div class="form-group col-4">
-						<label for="formControlRangeH">Hora&nbsp;<i class="fas fa-clock"></i></label>
+						<label for="navRangeH" class="w-100 d-flex">
+							Hora<i class="fas fa-clock pl-2"></i>
+							<small class="badge badge-pill badge-light ml-auto p-0" id="rangeTipH">23</small>
+						</label>
 						<input type="range"  min="0" max="23" step="1" class="form-control-range" id="navRangeH">
 					</div>
 				</form>

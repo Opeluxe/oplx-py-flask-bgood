@@ -43,7 +43,7 @@
 								Eventos y dónde está la gente
 							</div>
 							<div class="card-body d-flex flex-column align-items-start">
-								<div class="position-absolute w-100 pt-5 d-flex flex-column align-items-center leaflet-control" style="border: 1px black solid;">
+								<div class="position-absolute w-100 pt-5 d-flex flex-column align-items-center leaflet-control">
 									<div class="toast mt-5 mr-5 fade show" style="max-width: 60vw;" role="alert" aria-live="assertive" aria-atomic="true" id="myToast"  data-autohide="false">
 										<div class="toast-header">
 											<span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
@@ -64,24 +64,28 @@
 				</div>
 			</div>
 		</header>
-    <nav class="navbar navbar-expand-sm fixed-top navbar-dark bg-primary" id="navbar1">
+    <nav class="navbar navbar-expand-xl fixed-top navbar-dark bg-primary" id="navbar1">
 			<a class="navbar-brand" href="#mainMap">
 				<img src="../img/logo.svg" width="25" height="25" class="d-inline-block align-top" alt="">
 				séBien
 			</a>
 			<!--span class="badge badge-pill badge-light p-1 ml-3 mr-2" id="navTimer"-->
-			<a class="badge badge-pill badge-light p-2 ml-3 mr-2" id="navTimer" data-toggle="collapse" href="#collapsingControls" role="button" aria-expanded="false" aria-controls="collapsingControls">
+			<!--a class="badge badge-pill badge-light p-2 ml-3 mr-2" id="navTimer" data-toggle="collapse" href="#collapsingControls" role="button" aria-expanded="false" aria-controls="collapsingControls"-->
+			<!--button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#collapsingControls" aria-pressed="false"-->
+			<a class="btn btn-outline-light p-1 mt-0 mt-0 ml-0 mr-2" id="navTimer" data-toggle="collapse" href="#collapsingControls" role="button" aria-expanded="false" aria-controls="collapsingControls">
 				<!--i class="fas fa-history"></i-->
 				<i class="fas fa-swimmer pr-1"></i>
 				<strong>mié. 31 ene. 9999 23:59</strong>
 				<!--i class="fas fa-redo-alt"></i-->
 				<i class="fas fa-running pl-1"></i>
 			<!--/span-->
+			<!--/a-->
+			<!--/button-->
 			</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar" aria-controls="collapsingNavbar" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<div class="navbar-collapse collapse" id="collapsingControls">
+			<div class="navbar-collapse collapse mt-2" id="collapsingControls">
 				<form class="form-inline text-light">
 				  <select class="form-control form-control-sm col-2" id="navFormM">
 				    <option value="0" selected>ene</option>
@@ -102,23 +106,28 @@
 				    <option value="2020">2020</option>
 				  </select>
 					<div class="form-group col-4">
-						<label for="formControlRangeD">Día&nbsp;<i class="fas fa-calendar-day"></i></label>
+						<label for="navRangeD" class="w-100 d-flex">
+							Día<i class="fas fa-calendar-day pl-2"></i>
+							<small class="badge badge-pill badge-light ml-auto p-0">99</small>
+						</label>
 						<input type="range" min="1" max="31" step="1" class="form-control-range" id="navRangeD">
 					</div>
 					<div class="form-group col-4">
-						<label for="formControlRangeH">Hora&nbsp;<i class="fas fa-clock"></i></label>
+						<label for="navRangeH" class="w-100 d-flex">
+							Hora<i class="fas fa-clock pl-2"></i>
+							<small class="badge badge-pill badge-light ml-auto p-0">23</small>
+						</label>
 						<input type="range"  min="0" max="23" step="1" class="form-control-range" id="navRangeH">
 					</div>
 				  <!--button type="submit" class="btn btn-primary my-1">Submit</button-->
 				</form>
 			</div>
 			<div class="navbar-collapse collapse" id="collapsingNavbar">
-				<ul class="navbar-nav ml-auto">
+				<ul class="navbar-nav ml-auto text-right">
 					<li class="nav-item"><a class="nav-link" href="#eventos">Eventos</a></li>
 					<li class="nav-item"><a class="nav-link" href="#tips">Tips</a></li>
 					<!--div class="dropdown-divider"></div-->
 					<li class="nav-item"><a class="nav-link" href="#faq">Preguntas frecuentes</a></li>
-					<li class="nav-item"><a class="nav-link" href="#info">¿Cómo informarme?</a></li>
 				</ul>
 			</div>
 		</nav> 

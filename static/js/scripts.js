@@ -78,7 +78,12 @@
 			bGoodSetDate(timer, year, month, day, hour, nowDate, toast, toastMsg, true);
 		};
 		
-		function bGoodSetTimer(timer, year, month, day, hour, toast, toastMsg) {
+		function bGoodSetRangeTip(tip, object) {
+			let _value = $('#'+object).val();
+			$('#'+tip).val(_value);
+		};
+		
+		function bGoodSetTimer(timer, year, month, day, hour, toast, toastMsg, tipD, tipH) {
 			bGoodSetDate(timer, year, month, day, hour, new Date(), toast, toastMsg);
 			$('#'+year).change( function() {
 				$(this).find(":selected").each(function () {
@@ -95,6 +100,12 @@
 			});
 			$('#'+hour).change(function() {
 				bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
+			});
+			$('#'+day).on("input", function() {
+				bGoodSetRangeTip(tipD, day);
+			});
+			$('#'+hour).on("input", function() {
+				bGoodSetRangeTip(tipH, hour);
 			});
 		};
 		
@@ -309,5 +320,5 @@
 		if ($("#eventMapId").length) {
 			bGoodStartMap("eventMapId", gDynLayers);
 			bGoodNavCollapse("collapsingNavbar", "navTimer", "collapsingControls");
-			bGoodSetTimer("navTimer", "navFormY", "navFormM", "navRangeD", "navRangeH", "myToast", "myToastMsg");
+			bGoodSetTimer("navTimer", "navFormY", "navFormM", "navRangeD", "navRangeH", "myToast", "myToastMsg", "rangeTipD", "rangeTipH");
 		};
