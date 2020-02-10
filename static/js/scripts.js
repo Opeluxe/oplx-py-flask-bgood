@@ -78,13 +78,23 @@
 			bGoodSetDate(timer, year, month, day, hour, nowDate, toast, toastMsg, true);
 		};
 		
-		function bGoodSetRangeTip(tip, object) {
-			let _value = $('#'+object).val();
-			$('#'+tip).val(_value);
+		function bGoodSetRangeTip(tip, object, update=false) {
+			if (update) {
+				$('#'+tip).removeClass('invisible');
+				$('#'+tip).addClass('visible');
+				let _value = $('#'+object).val();
+				$('#'+tip).text(_value);
+			} else {
+				$('#'+tip).removeClass('visible');
+				$('#'+tip).addClass('invisible');
+			};
 		};
 		
 		function bGoodSetTimer(timer, year, month, day, hour, toast, toastMsg, tipD, tipH) {
 			bGoodSetDate(timer, year, month, day, hour, new Date(), toast, toastMsg);
+			bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
+			bGoodSetRangeTip(tipD, day);
+			bGoodSetRangeTip(tipH, hour);
 			$('#'+year).change( function() {
 				$(this).find(":selected").each(function () {
 					bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
@@ -97,15 +107,17 @@
 			});
 			$('#'+day).change(function() {
 				bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
+				bGoodSetRangeTip(tipD, day);
 			});
 			$('#'+hour).change(function() {
 				bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
+				bGoodSetRangeTip(tipH, hour);
 			});
 			$('#'+day).on("input", function() {
-				bGoodSetRangeTip(tipD, day);
+				bGoodSetRangeTip(tipD, day, true);
 			});
 			$('#'+hour).on("input", function() {
-				bGoodSetRangeTip(tipH, hour);
+				bGoodSetRangeTip(tipH, hour, true);
 			});
 		};
 		
