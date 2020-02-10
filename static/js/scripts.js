@@ -57,8 +57,10 @@
 				$('#'+hour).val(_hour).change();	
 			}
 			bGoodSetDisplay(timer, date);
-			bGoodGetData(date, "event", toast, toastMsg);
-			bGoodGetData(date, "overlay", toast, toastMsg);
+			if (change) {
+				bGoodGetData(date, "event", toast, toastMsg);
+				bGoodGetData(date, "overlay", toast, toastMsg);
+			};
 		};
 		
 		function bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg) {
