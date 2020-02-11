@@ -53,8 +53,8 @@
 			} else {
 				$('#'+year).val(_year);
 				$('#'+month).val(_month);
-				$('#'+day).val(_day).change();
-				$('#'+hour).val(_hour).change();	
+				$('#'+day).val(_day); //.change();
+				$('#'+hour).val(_hour); //.change();	
 			}
 			bGoodSetDisplay(timer, date);
 			if (change) {
