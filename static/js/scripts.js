@@ -95,8 +95,8 @@
 		};
 		
 		function bGoodSetTimer(timer, year, month, day, hour, toast, toastMsg, tipD, tipH, gData, gLayers) {
-			bGoodSetDate(timer, year, month, day, hour, new Date(), toast, toastMsg);
-			bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
+			bGoodSetDate(timer, year, month, day, hour, new Date(), toast, toastMsg, gData, gLayers);
+			bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg, gData, gLayers, true);
 			bGoodSetRangeTip(tipD, day);
 			bGoodSetRangeTip(tipH, hour);
 			$('#'+year).change( function() {
