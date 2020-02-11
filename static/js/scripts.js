@@ -40,7 +40,7 @@
 			holder.text(date.toLocaleDateString('es-PE', options));
 		};
 		
-		function bGoodSetDate(timer, year, month, day, hour, date, toast, toastMsg, change=false) {
+		function bGoodSetDate(timer, year, month, day, hour, date, toast, toastMsg, gData, gLayers, change=false) {
 			let _year = date.getFullYear();
 			let _month = date.getMonth();
 			let _day = date.getDate();
@@ -58,12 +58,14 @@
 			}
 			bGoodSetDisplay(timer, date);
 			if (change) {
-				bGoodGetData(date, "event", toast, toastMsg);
-				bGoodGetData(date, "overlay", toast, toastMsg);
+				bGoodGetData(date, "event", toast, toastMsg, gData);
+				bGoodGetData(date, "overlay", toast, toastMsg, gData);
 			};
+			bGoodExploitData(date, "event", gData, gLayers);
+			bGoodExploitData(date, "overlay", gData, gLayers);
 		};
 		
-		function bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg) {
+		function bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg, gData, gLayers, change=false) {
 			let _year = $('#'+year+' option:selected').val();
 			let _month = $('#'+month+' option:selected').val();
 			let _day = $('#'+day).val();
@@ -77,7 +79,7 @@
 			if ( nowDate > maxDate ) {
 				nowDate = maxDate;
 			};
-			bGoodSetDate(timer, year, month, day, hour, nowDate, toast, toastMsg, true);
+			bGoodSetDate(timer, year, month, day, hour, nowDate, toast, toastMsg, gData, gLayers, change);
 		};
 		
 		function bGoodSetRangeTip(tip, object, update=false) {
@@ -92,27 +94,27 @@
 			};
 		};
 		
-		function bGoodSetTimer(timer, year, month, day, hour, toast, toastMsg, tipD, tipH) {
+		function bGoodSetTimer(timer, year, month, day, hour, toast, toastMsg, tipD, tipH, gData, gLayers) {
 			bGoodSetDate(timer, year, month, day, hour, new Date(), toast, toastMsg);
 			bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
 			bGoodSetRangeTip(tipD, day);
 			bGoodSetRangeTip(tipH, hour);
 			$('#'+year).change( function() {
 				$(this).find(":selected").each(function () {
-					bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
+					bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg, gData, gLayers, true);
 				});
 			});
 			$('#'+month).change( function() {
 				$(this).find(":selected").each(function () {
-					bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
+					bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg, gData, gLayers, true);
 				});
 			});
 			$('#'+day).change(function() {
-				bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
+				bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg, gData, gLayers);
 				bGoodSetRangeTip(tipD, day);
 			});
 			$('#'+hour).change(function() {
-				bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg);
+				bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg, gData, gLayers);
 				bGoodSetRangeTip(tipH, hour);
 			});
 			$('#'+day).on("input", function() {
@@ -123,10 +125,10 @@
 			});
 		};
 		
-		function bGoodGetData(evdate, for_url, toast, toastMsg) {
+		function bGoodGetData(evdate, for_url, toast, toastMsg, gData) {
 			const service = "oplx-py-flask-bgood.herokuapp.com";
 			let webservice = 'https://' + service + '/' + for_url;
-			let params = { date: evdate };
+			let params = { date: evdate, period: true };
 			let jsondata = JSON.stringify(params);
 			let x = new XMLHttpRequest();
 			x.responseType = 'json';
@@ -143,7 +145,7 @@
 				x.setRequestHeader('Content-type', 'application/json; charset=utf-8');
 			}
 			x.onload = function() {
-					bGoodExtractData(for_url, x.response);
+					bGoodExtractData(for_url, x.response, gData);
 					$('#'+toast).toast('hide');
 			};
 			bGoodSetDisplay(toastMsg, evdate, true);
@@ -151,16 +153,42 @@
 			x.send(jsondata);
 		};
 		
-		function bGoodExtractData(kind, response) {
+		function bGoodExtractData(kind, response, gData) {
 			switch (kind) {
 				case "event":
-					bGoodUpdateEvent(response, gDynLayers);
+					gData.eventData = response;
 					break;
 				case "overlay":
-					bGoodUpdateOverlay(response, gDynLayers);
+					gData.overlayData = response;
 					break;
 				default:
 					break;
+			};
+		};
+		
+		function bGoodExploitData(evdate, kind, gData, gLayers) {
+			switch (kind) {
+				case "event":
+					let filterEvent = bGoodFilterData(gData.eventData, evdate);
+					bGoodUpdateEvent(filterEvent, gLayers);
+					break;
+				case "overlay":
+					let filterOverlay = bGoodFilterData(gData.overlayData, evdate);
+					bGoodUpdateOverlay(filterOverlay, gLayers);
+					break;
+				default:
+					break;
+			};
+		};
+		
+		function bGoodFilterData(data_, date_) {
+			let filterData = {};
+			for (let i=0; i<response.length; i++) {
+				let filter = data_[i];
+				let datetime = date_.getTime();
+				if (filter['DateFrom'].getTime()<=datetime && filter['DateTo'].getTime()>=datetime) {
+					filterData.push(filter);
+				};
 			};
 		};
 		
@@ -330,9 +358,13 @@
 			eventGroup: L.layerGroup(),
 			overlayGroup: {}
 		};
+		let gDynData = {
+			eventData: {},
+			overlayData: {}
+		}
 
 		if ($("#eventMapId").length) {
 			bGoodStartMap("eventMapId", gDynLayers);
 			bGoodNavCollapse("collapsingNavbar", "navTimer", "collapsingControls");
-			bGoodSetTimer("navTimer", "navFormY", "navFormM", "navRangeD", "navRangeH", "myToast", "myToastMsg", "rangeTipD", "rangeTipH");
+			bGoodSetTimer("navTimer", "navFormY", "navFormM", "navRangeD", "navRangeH", "myToast", "myToastMsg", "rangeTipD", "rangeTipH", gDynData, gDynLayers);
 		};

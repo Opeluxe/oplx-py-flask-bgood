@@ -6,13 +6,12 @@
 
 import pandas as pd
 from datetime import datetime, timezone
-#import numpy as np
-#import dill as pickle
 import flask
 from flask import request
 from flask import render_template
 import os
 import json
+import calendar
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -24,25 +23,26 @@ EVENT_SORT = ['From', 'To']
 OVERLAY_SORT = ['Type', 'Intensity', 'From', 'To']
 
 # Data manipulation routines
-def load_data(date_):
-    event_data = select_data(DATA_EVENT_PATH, EVENT_SORT, date_)
-    overlay_data = select_data(DATA_OVERLAY_PATH, OVERLAY_SORT, date_)
+def load_data(date_, period_=False):
+    event_data = select_data(DATA_EVENT_PATH, EVENT_SORT, date_, period_)
+    overlay_data = select_data(DATA_OVERLAY_PATH, OVERLAY_SORT, date_, period_)
     return event_data, overlay_data
     
-def load_event_data(date_):
-    return select_data(DATA_EVENT_PATH, EVENT_SORT, date_)
+def load_event_data(date_, period_=False):
+    return select_data(DATA_EVENT_PATH, EVENT_SORT, date_, period_)
     
-def load_overlay_data(date_):
-    return select_data(DATA_OVERLAY_PATH, OVERLAY_SORT, date_)
+def load_overlay_data(date_, period_=False):
+    return select_data(DATA_OVERLAY_PATH, OVERLAY_SORT, date_, period_)
         
-def select_data(path_, sort_, date_):
+def select_data(path_, sort_, date_, period_=False):
     loaded_data = pd.read_csv(path_, sep=';', error_bad_lines=False, low_memory=False)
-    selected_data = select_between_dates(loaded_data, date_)
+    selected_data = select_between_dates(loaded_data, date_, period_)
     selected_data.sort_values(by=sort_, inplace=True)
     return selected_data
     
-def select_between_dates(data_, date_):
+def select_between_dates(data_, date_, period_=False):
     selected_data = data_
+    dateFrom, dateTo = select_period_dates(date_, period_)
     selected_data['Date'] = pd.to_datetime(selected_data['Date'],yearfirst=True)
     selected_data['DateFrom'] = selected_data.apply(lambda row: datetime(year=row['Date'].year,
                                                                          month=row['Date'].month,
@@ -54,24 +54,34 @@ def select_between_dates(data_, date_):
                                                                        day=row['Date'].day,
                                                                        hour=row['To'],
                                                                        tzinfo=timezone.utc).astimezone(), axis=1)
-    selected_data = selected_data[(selected_data['DateFrom'] <= date_) & 
-                                  (selected_data['DateTo'] >= date_)]
-    selected_data.drop('DateFrom', axis=1, inplace=True)
-    selected_data.drop('DateTo', axis=1, inplace=True)
+    selected_data = selected_data[(selected_data['DateFrom'] <= dateTo) & 
+                                  (selected_data['DateTo'] >= dateFrom)]
+    #selected_data.drop('DateFrom', axis=1, inplace=True)
+    #selected_data.drop('DateTo', axis=1, inplace=True)
     return selected_data
+    
+def select_period_dates(date_, period_=False):
+    if period_ == True:
+        dateFrom = date_.replace(day=1)
+        dateTo = date_.replace(day=calendar.monthrange(date_.year,date_.month)[1])
+        return dateFrom, dateTo
+    else:
+        return date_, date_
     
 def process_request(request_, type_):
     if request_.method == 'POST':
         _date = request_.get_json()['date']
+        _period = request_.get_json()['period']
     else:
         _date = datetime.now(timezone.utc).astimezone()
+        _period = False
     if type_ == 'event':
-        _data = load_event_data(_date)
+        _data = load_event_data(_date, _period)
     else:
-        _data = load_overlay_data(_date)
+        _data = load_overlay_data(_date, _period)
     return flask.jsonify(json.loads(_data.to_json(orient='records')))
 
-    
+
 app = flask.Flask(__name__)
 
 #defining a route for only post requests for event data
