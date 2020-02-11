@@ -64,9 +64,9 @@ def select_period_dates(date_, period_=False):
     if period_ == True:
         dt = datetime.strptime(date_, '%Y-%m-%dT%H:%M:%S.%fZ')
         dt = datetime.combine(dt.date(), datetime.min.time())
-        dateFrom = dt.replace(day=1)
+        dateFrom = dt.replace(day=1, tzinfo=timezone.utc).astimezone()
         dt = datetime.combine(dt.date(), datetime.max.time())
-        dateTo = dt.replace(day=calendar.monthrange(dt.year,dt.month)[1])
+        dateTo = dt.replace(day=calendar.monthrange(dt.year,dt.month)[1], tzinfo=timezone.utc).astimezone()
         return dateFrom, dateTo
     else:
         return date_, date_
