@@ -62,9 +62,10 @@ def select_between_dates(data_, date_, period_=False):
     
 def select_period_dates(date_, period_=False):
     if period_ == True:
-        dt = datetime.combine(date_, datetime.min.time())
+        dt = datetime.datetime.strptime(date_, '%Y-%m-%dT%H:%M:%S.%fZ')
+        dt = datetime.combine(dt.date(), datetime.min.time())
         dateFrom = dt.replace(day=1)
-        dt = datetime.combine(date_, datetime.max.time())
+        dt = datetime.combine(dt.date(), datetime.max.time())
         dateTo = dt.replace(day=calendar.monthrange(date_.year,date_.month)[1])
         return dateFrom, dateTo
     else:
