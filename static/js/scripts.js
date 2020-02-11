@@ -58,11 +58,12 @@
 			}
 			bGoodSetDisplay(timer, date);
 			if (change) {
-				bGoodGetData(date, "event", toast, toastMsg, gData);
-				bGoodGetData(date, "overlay", toast, toastMsg, gData);
+				bGoodGetData(date, "event", toast, toastMsg, gData, gLayers);
+				bGoodGetData(date, "overlay", toast, toastMsg, gData, gLayers);
+			} else {
+				bGoodExploitData(date, "event", gData, gLayers);
+				bGoodExploitData(date, "overlay", gData, gLayers);
 			};
-			bGoodExploitData(date, "event", gData, gLayers);
-			bGoodExploitData(date, "overlay", gData, gLayers);
 		};
 		
 		function bGoodUpdateTimer(timer, year, month, day, hour, toast, toastMsg, gData, gLayers, change=false) {
@@ -125,7 +126,7 @@
 			});
 		};
 		
-		function bGoodGetData(evdate, for_url, toast, toastMsg, gData) {
+		function bGoodGetData(evdate, for_url, toast, toastMsg, gData, gLayers) {
 			const service = "oplx-py-flask-bgood.herokuapp.com";
 			let webservice = 'https://' + service + '/' + for_url;
 			let params = { date: evdate, period: true };
@@ -146,6 +147,7 @@
 			}
 			x.onload = function() {
 					bGoodExtractData(for_url, x.response, gData);
+					bGoodExploitData(evdate, for_url, gData, gLayers)
 					$('#'+toast).toast('hide');
 			};
 			bGoodSetDisplay(toastMsg, evdate, true);
