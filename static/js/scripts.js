@@ -183,7 +183,7 @@
 		
 		function bGoodFilterData(data_, date_) {
 			let filterData = {};
-			for (let i=0; i<response.length; i++) {
+			for (let i=0; i<data_.length; i++) {
 				let filter = data_[i];
 				let datetime = date_.getTime();
 				if (filter['DateFrom'].getTime()<=datetime && filter['DateTo'].getTime()>=datetime) {
