@@ -62,7 +62,7 @@ def select_between_dates(data_, date_, period_=False):
     
 def select_period_dates(date_, period_=False):
     if period_ == True:
-        dt = datetime.datetime.strptime(date_, '%Y-%m-%dT%H:%M:%S.%fZ')
+        dt = datetime.strptime(date_, '%Y-%m-%dT%H:%M:%S.%fZ')
         dt = datetime.combine(dt.date(), datetime.min.time())
         dateFrom = dt.replace(day=1)
         dt = datetime.combine(dt.date(), datetime.max.time())
