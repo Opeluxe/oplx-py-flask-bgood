@@ -51,8 +51,8 @@
 				$('#'+day).val(_day);
 				$('#'+hour).val(_hour);
 			} else {
-				$('#'+year).val(_year).change();
-				$('#'+month).val(_month).change();
+				$('#'+year).val(_year);
+				$('#'+month).val(_month);
 				$('#'+day).val(_day).change();
 				$('#'+hour).val(_hour).change();	
 			}
@@ -182,7 +182,7 @@
 		};
 		
 		function bGoodFilterData(data_, date_) {
-			let filterData = {};
+			let filterData = [];
 			for (let i=0; i<data_.length; i++) {
 				let filter = data_[i];
 				let datetime = date_.getTime();
