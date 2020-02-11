@@ -66,7 +66,7 @@ def select_period_dates(date_, period_=False):
         dt = datetime.combine(dt.date(), datetime.min.time())
         dateFrom = dt.replace(day=1)
         dt = datetime.combine(dt.date(), datetime.max.time())
-        dateTo = dt.replace(day=calendar.monthrange(date_.year,date_.month)[1])
+        dateTo = dt.replace(day=calendar.monthrange(dt.year,dt.month)[1])
         return dateFrom, dateTo
     else:
         return date_, date_
