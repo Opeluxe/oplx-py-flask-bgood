@@ -186,7 +186,7 @@
 			for (let i=0; i<data_.length; i++) {
 				let filter = data_[i];
 				let datetime = date_.getTime();
-				if (filter['DateFrom'].getTime()<=datetime && filter['DateTo'].getTime()>=datetime) {
+				if (filter['DateFrom']<=datetime && filter['DateTo']>=datetime) {
 					filterData.push(filter);
 				};
 			};
