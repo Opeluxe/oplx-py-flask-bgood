@@ -190,6 +190,7 @@
 					filterData.push(filter);
 				};
 			};
+			return filterData;
 		};
 		
 		function bGoodUpdateEvent(response, gLayers) {
