@@ -369,6 +369,14 @@
 			L.control.layers(baseMaps, overlayMaps).addTo(map);
 			
 			//map.locate({setView: true, maxZoom: 16});
+			
+			let geocoder = L.Control.geocoder({
+			  defaultMarkGeocode: false,
+				expand: "click"
+			}).on('markgeocode', function(e) {
+				map.setView(e.geocode.center, 15);
+			}).addTo(map);
+			
 		};
 		
 		function bGoodStartLocation(gCtrls, gData, gLayers) {
