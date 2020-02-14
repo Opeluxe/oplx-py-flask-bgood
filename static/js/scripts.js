@@ -29,15 +29,21 @@
 		
 		function bGoodSetDisplay(timer, date, message=false) {
 			const options = { 
-				weekday: (message) ? 'long' : 'short', 
-				year: 'numeric', 
-				month: (message) ? 'long' : 'short', 
-				day: 'numeric', 
-				hour: 'numeric', 
-				minute: 'numeric' 
+				weekday: (message) ? 'long' : 'short',
+				year: 'numeric',
+				month: (message) ? 'long' : 'short',
+				day: 'numeric'
+			};
+			if (message==false) {
+				options.hour = 'numeric';
+				options.minute = 'numeric';
 			};
 			let holder = $('#'+timer+ ' strong');
-			holder.text(date.toLocaleDateString('es-PE', options));
+			let text = date.toLocaleDateString('es-PE', options);
+			if (message==false) {
+				text = text.replace(/de /g, '');
+			};
+			holder.text(text);
 		};
 		
 		function bGoodSetDate(timer, year, month, day, hour, date, toast, toastMsg, gData, gLayers, change=false) {
@@ -312,7 +318,7 @@
 			return overlayGroup;
 		};
 		
-		function bGoodStartMap(mapId, gLayers) {
+		function bGoodStartMap(mapId, latLng, gLayers) {
 			gLayers.overlayGroup = bGoodStartOverlay(mapId);
 			
 			let baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -344,7 +350,7 @@
 			};
 			
 			let map = new L.Map(mapId, {
-			  center: new L.LatLng(-12.064670090951, -77.051925659180),
+			  center: latLng,
 			  zoom: 14,
 				minZoom: 6,
 				maxZoom: 18,
@@ -355,6 +361,51 @@
 			
 			//map.locate({setView: true, maxZoom: 16});
 		};
+		
+		function bGoodStartLocation(gCtrls, gData, gLayers) {
+			const geoOptions = {
+				enableHighAccuracy: true,
+				maximumAge: 7000,
+				timeout: 5000
+			};
+			let latLng = {};
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					function (position) {
+						latLng = new L.LatLng(position.coords.latitude, position.coords.longitude);
+						bGoodDefineLocation(gCtrls, gData, gLayers, latLng);
+					}, 
+					function (err) {
+						bGoodDefineLocation(gCtrls, gData, gLayers, latLng);
+					}, 
+					geoOptions);
+			} else {
+				bGoodDefineLocation(gCtrls, gData, gLayers, latLng);
+			};
+		};
+		
+		function bGoodDefineLocation(gCtrls, gData, gLayers, latLng) {
+			if (jQuery.isEmptyObject(latLng)) {
+				$.getJSON('https://ipapi.co/json/', function(data) {
+					latLng = new L.LatLng(data.latitude, data.longitude);
+				}).always(function() {
+					if (jQuery.isEmptyObject(latLng)) {
+						latLng = new L.LatLng(-12.0551, -77.04506);
+					};
+					bGoodStartMapTimer(gCtrls, gData, gLayers, latLng);
+				});
+			} else {
+				bGoodStartMapTimer(gCtrls, gData, gLayers, latLng);
+			};
+		};
+		
+		function bGoodStartMapTimer(gCtrls, gData, gLayers, latLng) {
+			bGoodStartMap(gCtrls.mapCanvas, latLng, gLayers);
+			bGoodSetTimer(gCtrls.navbarDate, gCtrls.navbarFYear, gCtrls.navbarFMonth, 
+										gCtrls.navbarFDay, gCtrls.navbarFHour, gCtrls.mapAlert, 
+										gCtrls.mapAlertMsg, gCtrls.navbarFTipD, gCtrls.navbarFTipH, 
+										gData, gLayers);
+		};
 				
 		// SéBien variables and initialization
 		let gDynLayers = {
@@ -364,10 +415,23 @@
 		let gDynData = {
 			eventData: {},
 			overlayData: {}
-		}
+		};
+		let gControls = {
+			mapCanvas: "eventMapId",
+			navbarMenu: "collapsingNavbar",
+			navbarDate: "navTimer",
+			navbarForm: "collapsingControls",
+			navbarFYear: "navFormY",
+			navbarFMonth: "navFormM",
+			navbarFDay: "navRangeD",
+			navbarFHour: "navRangeH",
+			mapAlert: "myToast",
+			mapAlertMsg: "myToastMsg",
+			navbarFTipD: "rangeTipD",
+			navbarFTipH: "rangeTipH"
+		};
 
 		if ($("#eventMapId").length) {
-			bGoodStartMap("eventMapId", gDynLayers);
-			bGoodNavCollapse("collapsingNavbar", "navTimer", "collapsingControls");
-			bGoodSetTimer("navTimer", "navFormY", "navFormM", "navRangeD", "navRangeH", "myToast", "myToastMsg", "rangeTipD", "rangeTipH", gDynData, gDynLayers);
+			bGoodNavCollapse(gControls.navbarMenu, gControls.navbarDate, gControls.navbarForm);
+			bGoodStartLocation(gControls, gDynData, gDynLayers);
 		};

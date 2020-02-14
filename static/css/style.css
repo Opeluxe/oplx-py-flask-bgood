@@ -65,3 +65,6 @@
 .leaflet-control-layers-list:before {
 	height: 0px;
 }
+.leaflet-popup {
+	max-width: 60vw;
+}
