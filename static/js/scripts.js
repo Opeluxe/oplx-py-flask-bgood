@@ -355,7 +355,8 @@
 			let overlayMaps = {
 				'<i class="far fa-grin-stars"></i> Eventos': gLayers.eventGroup,
 				'<i class="far fa-grin-wink"></i> Densidad': gLayers.overlayGroup['Density'],
-				'<i class="far fa-meh-rolling-eyes"></i> Ocurrencias': gLayers.overlayGroup['Issue']
+				'<i class="far fa-meh-rolling-eyes"></i> Ocurrencias': gLayers.overlayGroup['Issue'],
+				'<i class="far fa-meh-rolling-eyes"></i> Población': gLayers.geoGroup
 			};
 			
 			let map = new L.Map(mapId, {
@@ -423,11 +424,54 @@
 										gCtrls.mapAlertMsg, gCtrls.navbarFTipD, gCtrls.navbarFTipH, 
 										gData, gLayers);
 		};
+		
+		function bGoodSetGeoLayer(gData, gLayers) {
+			//Test: add GeoJSON info as overlay
+			let geolayer = {};
+			$.getJSON('/static/json/lima.geojson', function(data) {
+				geolayer = L.geoJSON(data, {
+					style: function(feature) {
+						return {
+							color: bGoodGeoColor(feature.properties.POBLACION),
+							opacity: .6,
+							fillColor: bGoodGeoColor(feature.properties.POBLACION),
+							fillOpacity: .4,
+							weight: 1
+						}
+					}
+				});
+				gLayers.geoGroup.clearLayers();
+				gLayers.geoGroup.addLayer(geolayer);
+			});
+			
+		};
+		
+		function bGoodGeoColor(feature) {
+			let color = '#ff0000';
+			/*if (feature<172017) {
+				color = '#0000ff';
+			} else
+			return color;*/
+			switch (true) {
+				case (feature <  12623): color = '#3effec'; break;
+				case (feature <  38530): color = '#53e8d8'; break;
+				case (feature <  72756): color = '#69d1c4'; break;
+				case (feature < 111015): color = '#7ebab0'; break;
+				case (feature < 172017): color = '#94a39c'; break;
+				case (feature < 261864): color = '#a98c87'; break;
+				case (feature < 350551): color = '#bf7573'; break;
+				case (feature < 438994): color = '#d45e5f'; break;
+				case (feature < 645313): color = '#ea474b'; break;
+				default: color = '#ff3037'; break;
+			};
+			return color;
+		};
 				
 		// SéBien variables and initialization
 		let gDynLayers = {
 			eventGroup: L.layerGroup(),
-			overlayGroup: {}
+			overlayGroup: {},
+			geoGroup: L.layerGroup()
 		};
 		let gDynData = {
 			eventData: {},
@@ -451,4 +495,5 @@
 		if ($("#eventMapId").length) {
 			bGoodNavCollapse(gControls.navbarMenu, gControls.navbarDate, gControls.navbarForm);
 			bGoodStartLocation(gControls, gDynData, gDynLayers);
+			bGoodSetGeoLayer(gDynData, gDynLayers);
 		};
